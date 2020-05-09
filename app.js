@@ -12,6 +12,13 @@ form.addEventListener(`keypress`, function (event) {
 
 function getStreet(inputStName){
 fetch(`https://api.winnipegtransit.com/v3/streets.json?api-key=${apiKey}&name=${inputStName}&usage=long`)
-.then(response => response.json())
-.then(json => console.log(json))
+.then(response => {
+  if(response.ok) {
+    return response.json();
+  } else {
+    throw new Error("There is a problem (;T__T:)");
+  }
+}).then(json => console.log(json.streets))
 }
+
+getStreet(`henlow`)
