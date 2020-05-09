@@ -13,6 +13,7 @@ form.addEventListener(`keypress`, function (event) {
 
 streetContainer.addEventListener(`click`, function (event) {
   if (event.target.tagName === `A`) {
+    console.log(event.target.dataset.streetKey);
     stopInStreet(event.target.dataset.streetKey);
   }
 })
@@ -37,8 +38,9 @@ function buildSchedualTable(scheduleArray){
 }
 
 function scheduleArrayPromise(stopArray) {
-  const stopKeyArray = stopArray.map(ele => ele.key)
-  const jsonPromise = []
+  const stopKeyArray = stopArray.map(ele => ele.key);
+  console.log(stopKeyArray);
+  const jsonPromise = [];
 
   for (let stopKey of stopKeyArray) {
     jsonPromise.push(
@@ -70,7 +72,10 @@ function stopInStreet(streetKey) {
         throw new Error("There is a problem in stop names (;T__T:)");
       }
     })
-    .then(json => scheduleArrayPromise(json.stops))
+    .then(json => {
+      console.log(json.stops);
+      return scheduleArrayPromise(json.stops);
+    })
 }
 
 function getStreet(inputStName) {
@@ -79,10 +84,13 @@ function getStreet(inputStName) {
       if (response.ok) {
         return response.json();
       } else {
-        throw new Error("There is a problem (;T__T:)");
+        throw new Error("There is a problem in street name (;T__T:)");
       }
     })
-    .then(json => buildStreetList(json.streets))
+    .then(json => {
+      console.log(json);
+      return buildStreetList(json.streets);
+    })
 }
 
 function buildStreetList(streetArray) {
