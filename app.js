@@ -2,7 +2,7 @@ const form = document.querySelector(`form`);
 const input = form.querySelector(`input`);
 const apiKey = `Ehg5Nso4pNe0kGRIfPW`;
 const streetContainer = document.querySelector(`.streets`);
-
+const tableContainer = document.querySelector(`tbody`);
 
 form.addEventListener(`keypress`, function (event) {
   if (event.keyCode === 13) {
@@ -17,8 +17,24 @@ streetContainer.addEventListener(`click`, function(event){
   }
 })
 
+function buildTable(stopArray) {
+  let html = ''
+  tableContainer.innerHTML = ``;
+  stopArray.forEach(ele => {
+    html += ` <tr>
+    <td>${ele.name}</td>
+    <td>${ele[`cross-street`].name}</td>
+    <td>${ele.direction}</td>
+    <td>bus</td>
+    <td>time</td>
+  </tr>`;
+  })
+
+  tableContainer.insertAdjacentHTML(`beforeend`, html)
+}
+
 function stopInStreet(streetKey) {
-  fetch(`https://api.winnipegtransit.com/v3/stops.json?street=${streetKey}&api-key=${apiKey}&usage=long`)
+  fetch(`https://api.winnipegtransit.com/v3/stops.json?street=${streetKey}&api-key=${apiKey}`)
     .then(response => {
       if (response.ok) {
         return response.json();
@@ -26,9 +42,11 @@ function stopInStreet(streetKey) {
         throw new Error("There is a problem in stop names (;T__T:)");
       }
     })
-    .then(json => console.log(json))
+    .then(json => {
+      console.log(json.stops);
+      buildTable(json.stops);
+    })
 }
-
 
 function getStreet(inputStName) {
   fetch(`https://api.winnipegtransit.com/v3/streets.json?api-key=${apiKey}&name=${inputStName}&usage=long`)
