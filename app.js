@@ -11,6 +11,12 @@ form.addEventListener(`keypress`, function (event) {
   }
 });
 
+streetContainer.addEventListener(`click`, function(event){
+  if (event.target.tagName === `A`) {
+    console.log(event.target.tagName);
+  }
+})
+
 function getStreet(inputStName) {
   fetch(`https://api.winnipegtransit.com/v3/streets.json?api-key=${apiKey}&name=${inputStName}&usage=long`)
     .then(response => {
