@@ -1,31 +1,32 @@
 const form = document.querySelector(`form`);
 const input = form.querySelector(`input`);
-const  apiKey = `Ehg5Nso4pNe0kGRIfPW`;
+const apiKey = `Ehg5Nso4pNe0kGRIfPW`;
 const streetContainer = document.querySelector(`.streets`);
 
 
 form.addEventListener(`keypress`, function (event) {
   if (event.keyCode === 13) {
     event.preventDefault();
-    console.log(input.value);
+    getStreet(input.value);
   }
 });
 
-
-function getStreet(inputStName){
-fetch(`https://api.winnipegtransit.com/v3/streets.json?api-key=${apiKey}&name=${inputStName}&usage=long`)
-.then(response => {
-  if(response.ok) {
-    return response.json();
-  } else {
-    throw new Error("There is a problem (;T__T:)");
-  }
-}).then(json => console.log(json.streets))
+function getStreet(inputStName) {
+  fetch(`https://api.winnipegtransit.com/v3/streets.json?api-key=${apiKey}&name=${inputStName}&usage=long`)
+    .then(response => {
+      if (response.ok) {
+        return response.json();
+      } else {
+        throw new Error("There is a problem (;T__T:)");
+      }
+    })
+    .then(json => buildStreetList(json.streets))
 }
 
 function buildStreetList(streetArray) {
   let html = ``;
   streetContainer.innerHTML = ``;
+  
   if (streetArray !== []) {
     streetArray.forEach(ele => {
       html += `<a href="#" data-street-key="${ele.key}">${ele.name}</a>`;
