@@ -14,8 +14,23 @@ form.addEventListener(`keypress`, function (event) {
 streetContainer.addEventListener(`click`, function(event){
   if (event.target.tagName === `A`) {
     console.log(event.target.tagName);
+
   }
 })
+
+function stopInStreet(streetKey) {
+  fetch(`https://api.winnipegtransit.com/v3/stops.json?street=${streetKey}&api-key=${apiKey}&usage=long`)
+    .then(response => {
+      if (response.ok) {
+        return response.json();
+      } else {
+        throw new Error("There is a problem in stop names (;T__T:)");
+      }
+    })
+    .then(json => console.log(json))
+}
+
+stopInStreet(1717);
 
 function getStreet(inputStName) {
   fetch(`https://api.winnipegtransit.com/v3/streets.json?api-key=${apiKey}&name=${inputStName}&usage=long`)
