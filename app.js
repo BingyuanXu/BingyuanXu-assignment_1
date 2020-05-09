@@ -3,7 +3,6 @@ const input = form.querySelector(`input`);
 const apiKey = `Ehg5Nso4pNe0kGRIfPW`;
 const streetContainer = document.querySelector(`.streets`);
 const tableContainer = document.querySelector(`tbody`);
-let stopObjectArray = [];
 
 form.addEventListener(`keypress`, function (event) {
   if (event.keyCode === 13) {
@@ -18,17 +17,10 @@ streetContainer.addEventListener(`click`, function (event) {
   }
 })
 
-function builtStopObject(stopArray) {
-  stopObjectArray = stopArray.map(ele => {
-    let stopObject = {};
-    stopObject.stopName = ele.name;
-    stopObject.crossStreet = ele[`cross-street`].name;
-    stopObject.direction = ele.direction;
-    stopObject.streetName = ele.street.name;
-    return stopObject;
-  })
+function getBusScheduleArray(stopArray) {
+  const stopKeyArray = stopArray.map(ele => ele.key)
 
-  console.log(stopObjectArray);
+  console.log(stopKeyArray);
 }
 
 function stopInStreet(streetKey) {
@@ -40,10 +32,7 @@ function stopInStreet(streetKey) {
         throw new Error("There is a problem in stop names (;T__T:)");
       }
     })
-    .then(json => {
-      console.log(json.stops);
-      builtStopObject(json.stops);
-    })
+    .then(json => getBusScheduleArray(json.stops))
 }
 
 function getStreet(inputStName) {
