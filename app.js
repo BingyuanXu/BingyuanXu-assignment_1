@@ -17,10 +17,48 @@ streetContainer.addEventListener(`click`, function (event) {
   }
 })
 
-function getBusScheduleArray(stopArray) {
-  const stopKeyArray = stopArray.map(ele => ele.key)
+function buildSchedualTable(scheduleArray){
+  let html = '';
+  tableContainer.innerHTML = '';
+  for(let schedule of scheduleArray) {
+    for(let routeSchedule of schedule[`route-schedules`]){
+      for(let scheduledStop of routeSchedule[`scheduled-stops`])
+      html += ` <tr>
+      <td>${schedule.stop.street.name}</td>
+      <td>${schedule.stop[`cross-street`].name}</td>
+      <td>${schedule.stop.direction}</td>
+      <td>${routeSchedule.route.number}</td>
+      <td>${scheduledStop.times.departure.estimated}</td>
+    </tr>`
+    }
+  }
 
-  console.log(stopKeyArray);
+  tableContainer.insertAdjacentHTML(`beforeend`, html)
+}
+
+function scheduleArrayPromise(stopArray) {
+  const stopKeyArray = stopArray.map(ele => ele.key)
+  const jsonPromise = []
+
+  for (let stopKey of stopKeyArray) {
+    jsonPromise.push(
+      fetch(`https://api.winnipegtransit.com/v3/stops/${stopKey}/schedule.json?api-key=Ehg5Nso4pNe0kGRIfPW&max-results-per-route=2`)
+        .then(response => {
+          if (response.ok) {
+            return response.json();
+          } else {
+            throw new Error("There is a problem in stop names (;T__T:)");
+          }
+        })
+        .then(json => json[`stop-schedule`])
+    )
+  }
+
+  Promise.all(jsonPromise)
+    .then(result => {
+      console.log(result);
+      buildSchedualTable(result);
+    })
 }
 
 function stopInStreet(streetKey) {
@@ -32,7 +70,7 @@ function stopInStreet(streetKey) {
         throw new Error("There is a problem in stop names (;T__T:)");
       }
     })
-    .then(json => getBusScheduleArray(json.stops))
+    .then(json => scheduleArrayPromise(json.stops))
 }
 
 function getStreet(inputStName) {
