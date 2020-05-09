@@ -13,8 +13,7 @@ form.addEventListener(`keypress`, function (event) {
 
 streetContainer.addEventListener(`click`, function(event){
   if (event.target.tagName === `A`) {
-    console.log(event.target.tagName);
-
+    stopInStreet(event.target.dataset.streetKey);
   }
 })
 
@@ -30,7 +29,6 @@ function stopInStreet(streetKey) {
     .then(json => console.log(json))
 }
 
-stopInStreet(1717);
 
 function getStreet(inputStName) {
   fetch(`https://api.winnipegtransit.com/v3/streets.json?api-key=${apiKey}&name=${inputStName}&usage=long`)
