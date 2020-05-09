@@ -17,10 +17,28 @@ streetContainer.addEventListener(`click`, function (event) {
   }
 })
 
-function getBusScheduleArray(stopArray) {
+function scheduleArrayPromise(stopArray) {
   const stopKeyArray = stopArray.map(ele => ele.key)
+  const jsonPromise = []
 
-  console.log(stopKeyArray);
+  for (let stopKey of stopKeyArray) {
+    jsonPromise.push(
+      fetch(`https://api.winnipegtransit.com/v3/stops/${stopKey}/schedule.json?api-key=Ehg5Nso4pNe0kGRIfPW&max-results-per-route=2`)
+        .then(response => {
+          if (response.ok) {
+            return response.json();
+          } else {
+            throw new Error("There is a problem in stop names (;T__T:)");
+          }
+        })
+        .then(json => json[`stop-schedule`])
+    )
+  }
+
+  Promise.all(jsonPromise)
+    .then(result => {
+      console.log(result);
+    })
 }
 
 function stopInStreet(streetKey) {
@@ -32,7 +50,7 @@ function stopInStreet(streetKey) {
         throw new Error("There is a problem in stop names (;T__T:)");
       }
     })
-    .then(json => getBusScheduleArray(json.stops))
+    .then(json => scheduleArrayPromise(json.stops))
 }
 
 function getStreet(inputStName) {
