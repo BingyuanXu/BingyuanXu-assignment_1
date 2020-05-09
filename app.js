@@ -3,6 +3,7 @@ const input = form.querySelector(`input`);
 const apiKey = `Ehg5Nso4pNe0kGRIfPW`;
 const streetContainer = document.querySelector(`.streets`);
 const tableContainer = document.querySelector(`tbody`);
+let stopObjectArray = [];
 
 form.addEventListener(`keypress`, function (event) {
   if (event.keyCode === 13) {
@@ -11,26 +12,23 @@ form.addEventListener(`keypress`, function (event) {
   }
 });
 
-streetContainer.addEventListener(`click`, function(event){
+streetContainer.addEventListener(`click`, function (event) {
   if (event.target.tagName === `A`) {
     stopInStreet(event.target.dataset.streetKey);
   }
 })
 
-function buildTable(stopArray) {
-  let html = ''
-  tableContainer.innerHTML = ``;
-  stopArray.forEach(ele => {
-    html += ` <tr>
-    <td>${ele.name}</td>
-    <td>${ele[`cross-street`].name}</td>
-    <td>${ele.direction}</td>
-    <td>bus</td>
-    <td>time</td>
-  </tr>`;
+function builtStopObject(stopArray) {
+  stopObjectArray = stopArray.map(ele => {
+    let stopObject = {};
+    stopObject.stopName = ele.name;
+    stopObject.crossStreet = ele[`cross-street`].name;
+    stopObject.direction = ele.direction;
+    stopObject.streetName = ele.street.name;
+    return stopObject;
   })
 
-  tableContainer.insertAdjacentHTML(`beforeend`, html)
+  console.log(stopObjectArray);
 }
 
 function stopInStreet(streetKey) {
@@ -44,7 +42,7 @@ function stopInStreet(streetKey) {
     })
     .then(json => {
       console.log(json.stops);
-      buildTable(json.stops);
+      builtStopObject(json.stops);
     })
 }
 
@@ -63,7 +61,7 @@ function getStreet(inputStName) {
 function buildStreetList(streetArray) {
   let html = ``;
   streetContainer.innerHTML = ``;
-  
+
   if (streetArray !== []) {
     streetArray.forEach(ele => {
       html += `<a href="#" data-street-key="${ele.key}">${ele.name}</a>`;
