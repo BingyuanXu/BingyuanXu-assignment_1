@@ -17,6 +17,25 @@ streetContainer.addEventListener(`click`, function (event) {
   }
 })
 
+function buildSchedualTable(scheduleArray){
+  let html = '';
+  tableContainer.innerHTML = '';
+  for(let schedule of scheduleArray) {
+    for(let routeSchedule of schedule[`route-schedules`]){
+      for(let scheduledStop of routeSchedule[`scheduled-stops`])
+      html += ` <tr>
+      <td>${schedule.stop.street.name}</td>
+      <td>${schedule.stop[`cross-street`].name}</td>
+      <td>${schedule.stop.direction}</td>
+      <td>${routeSchedule.route.number}</td>
+      <td>${scheduledStop.times.departure.estimated}</td>
+    </tr>`
+    }
+  }
+
+  tableContainer.insertAdjacentHTML(`beforeend`, html)
+}
+
 function scheduleArrayPromise(stopArray) {
   const stopKeyArray = stopArray.map(ele => ele.key)
   const jsonPromise = []
@@ -38,6 +57,7 @@ function scheduleArrayPromise(stopArray) {
   Promise.all(jsonPromise)
     .then(result => {
       console.log(result);
+      buildSchedualTable(result);
     })
 }
 
