@@ -29,7 +29,7 @@ function buildSchedualTable(scheduleArray){
       <td>${schedule.stop[`cross-street`].name}</td>
       <td>${schedule.stop.direction}</td>
       <td>${routeSchedule.route.number}</td>
-      <td>${scheduledStop.times.departure.estimated}</td>
+      <td>${timeFormatter(scheduledStop.times.departure.estimated)}</td>
     </tr>`
     }
   }
@@ -106,4 +106,9 @@ function buildStreetList(streetArray) {
   }
 
   streetContainer.insertAdjacentHTML(`beforeend`, `${html}`)
+}
+
+function timeFormatter(timeString) {
+const time = new Date(timeString)
+return time.toLocaleString(`Canada`, {hour:"2-digit",minute:"2-digit" ,hour12: true})
 }
