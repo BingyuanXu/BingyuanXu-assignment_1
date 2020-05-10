@@ -14,8 +14,15 @@ form.addEventListener(`keypress`, function (event) {
 streetContainer.addEventListener(`click`, function (event) {
   if (event.target.tagName === `A`) {
     stopInStreet(event.target.dataset.streetKey);
+    addStreetNameEle(event.target.textContent);
   }
 })
+
+function addStreetNameEle(streetName){
+  const streetNameEle = document.querySelector(`#street-name`);
+  streetNameEle.textContent = ``;
+  streetNameEle.textContent = `Displaying results for ${streetName}`;
+}
 
 function buildSchedualTable(scheduleArray) {
   let html = '';
