@@ -23,13 +23,12 @@ function buildSchedualTable(scheduleArray){
   tableContainer.innerHTML = '';
   for(let schedule of scheduleArray) {
     for(let routeSchedule of schedule[`route-schedules`]){
-      for(let scheduledStop of routeSchedule[`scheduled-stops`])
       html += ` <tr>
       <td>${schedule.stop.street.name}</td>
       <td>${schedule.stop[`cross-street`].name}</td>
       <td>${schedule.stop.direction}</td>
       <td>${routeSchedule.route.number}</td>
-      <td>${timeFormatter(scheduledStop.times.departure.estimated)}</td>
+      <td>${timeFormatter(routeSchedule[`scheduled-stops`][0].times.departure.estimated)}</td>
     </tr>`
     }
   }
