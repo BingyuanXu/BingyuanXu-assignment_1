@@ -9,27 +9,27 @@ form.addEventListener(`keypress`, function (event) {
     event.preventDefault();
     getStreet(input.value);
   }
-});
+})
 
 streetContainer.addEventListener(`click`, function (event) {
   if (event.target.tagName === `A`) {
-    console.log(event.target.dataset.streetKey);
     stopInStreet(event.target.dataset.streetKey);
   }
 })
 
-function buildSchedualTable(scheduleArray){
+function buildSchedualTable(scheduleArray) {
   let html = '';
   tableContainer.innerHTML = '';
-  for(let schedule of scheduleArray) {
-    for(let routeSchedule of schedule[`route-schedules`]){
+
+  for (let schedule of scheduleArray) {
+    for (let routeSchedule of schedule[`route-schedules`]) {
       html += ` <tr>
       <td>${schedule.stop.street.name}</td>
       <td>${schedule.stop[`cross-street`].name}</td>
       <td>${schedule.stop.direction}</td>
       <td>${routeSchedule.route.number}</td>
       <td>${timeFormatter(routeSchedule[`scheduled-stops`][0].times.departure.estimated)}</td>
-    </tr>`
+    </tr>`;
     }
   }
 
@@ -38,7 +38,6 @@ function buildSchedualTable(scheduleArray){
 
 function scheduleArrayPromise(stopArray) {
   const stopKeyArray = stopArray.map(ele => ele.key);
-  console.log(stopKeyArray);
   const jsonPromise = [];
 
   for (let stopKey of stopKeyArray) {
@@ -56,10 +55,7 @@ function scheduleArrayPromise(stopArray) {
   }
 
   Promise.all(jsonPromise)
-    .then(result => {
-      console.log(result);
-      buildSchedualTable(result);
-    })
+    .then(result => buildSchedualTable(result))
 }
 
 function stopInStreet(streetKey) {
@@ -71,10 +67,7 @@ function stopInStreet(streetKey) {
         throw new Error("There is a problem in stop names (;T__T:)");
       }
     })
-    .then(json => {
-      console.log(json.stops);
-      return scheduleArrayPromise(json.stops);
-    })
+    .then(json => scheduleArrayPromise(json.stops))
 }
 
 function getStreet(inputStName) {
@@ -86,10 +79,7 @@ function getStreet(inputStName) {
         throw new Error("There is a problem in street name (;T__T:)");
       }
     })
-    .then(json => {
-      console.log(json);
-      return buildStreetList(json.streets);
-    })
+    .then(json => buildStreetList(json.streets))
 }
 
 function buildStreetList(streetArray) {
@@ -108,6 +98,6 @@ function buildStreetList(streetArray) {
 }
 
 function timeFormatter(timeString) {
-const time = new Date(timeString)
-return time.toLocaleString(`Canada`, {hour:"2-digit",minute:"2-digit" ,hour12: true})
+  const time = new Date(timeString);
+  return time.toLocaleString(`Canada`, { hour: "2-digit", minute: "2-digit", hour12: true });
 }
