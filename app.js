@@ -7,7 +7,7 @@ const tableContainer = document.querySelector(`tbody`);
 form.addEventListener(`keypress`, function (event) {
   if (event.keyCode === 13) {
     event.preventDefault();
-    getStreet(input.value);
+    buildStreetList(input.value);
   }
 })
 
@@ -18,7 +18,37 @@ streetContainer.addEventListener(`click`, function (event) {
   }
 })
 
-function addStreetNameEle(streetName){
+function getStreet(inputStName) {
+  return fetch(`https://api.winnipegtransit.com/v3/streets.json?api-key=${apiKey}&name=${inputStName}&usage=long`)
+    .then(response => {
+      if (response.ok) {
+        return response.json();
+      } else {
+        throw new Error("There is a problem in street name (;T__T:)");
+      }
+    })
+    .then(json => json.streets)
+}
+
+function buildStreetList(inputStName) {
+  let html = ``;
+  streetContainer.innerHTML = ``;
+
+  getStreet(inputStName)
+    .then(streetArray => {
+      if (streetArray !== []) {
+        streetArray.forEach(ele => {
+          html += `<a href="#" data-street-key="${ele.key}">${ele.name}</a>`;
+        });
+      } else {
+        html = `No Streets found`;
+      }
+
+      streetContainer.insertAdjacentHTML(`beforeend`, html)
+    })
+}
+
+function addStreetNameEle(streetName) {
   const streetNameEle = document.querySelector(`#street-name`);
   streetNameEle.textContent = ``;
   streetNameEle.textContent = `Displaying results for ${streetName}`;
@@ -77,34 +107,13 @@ function stopInStreet(streetKey) {
     .then(json => scheduleArrayPromise(json.stops))
 }
 
-function getStreet(inputStName) {
-  fetch(`https://api.winnipegtransit.com/v3/streets.json?api-key=${apiKey}&name=${inputStName}&usage=long`)
-    .then(response => {
-      if (response.ok) {
-        return response.json();
-      } else {
-        throw new Error("There is a problem in street name (;T__T:)");
-      }
-    })
-    .then(json => buildStreetList(json.streets))
-}
-
-function buildStreetList(streetArray) {
-  let html = ``;
-  streetContainer.innerHTML = ``;
-
-  if (streetArray !== []) {
-    streetArray.forEach(ele => {
-      html += `<a href="#" data-street-key="${ele.key}">${ele.name}</a>`;
-    });
-  } else {
-    html = `No Streets found`;
-  }
-
-  streetContainer.insertAdjacentHTML(`beforeend`, `${html}`)
-}
-
 function timeFormatter(timeString) {
   const time = new Date(timeString);
-  return time.toLocaleString(`Canada`, { hour: "2-digit", minute: "2-digit", hour12: true });
+  const options = {
+    timeZone: "Canada/Central",
+    hour12: true,
+    hour: "numeric",
+    minute: "numeric", seconds: "numeric"
+  }
+  return time.toLocaleTimeString(`en-US`, options);
 }
