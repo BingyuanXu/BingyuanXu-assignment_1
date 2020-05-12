@@ -80,9 +80,8 @@ function buildSchedualTable(streetKey) {
 }
 
 function getScheduleArray(streetKey) {
-  const jsonPromise = [];
-
   return gstStopNamesInStreet(streetKey).then((stopArray) => {
+    const jsonPromise = [];
     const stopKeyArray = stopArray.map((ele) => ele.key);
 
     for (let stopKey of stopKeyArray) {
