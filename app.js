@@ -18,7 +18,7 @@ streetContainer.addEventListener(`click`, function (event) {
   }
 })
 
-function getStreet(inputStName) {
+function getStreetName(inputStName) {
   return fetch(`https://api.winnipegtransit.com/v3/streets.json?api-key=${apiKey}&name=${inputStName}&usage=long`)
     .then(response => {
       if (response.ok) {
@@ -34,7 +34,7 @@ function buildStreetList(inputStName) {
   let html = ``;
   streetContainer.innerHTML = ``;
 
-  getStreet(inputStName)
+  getStreetName(inputStName)
     .then(streetArray => {
       if (streetArray.length !== 0) {
         streetArray.forEach(ele => {
@@ -58,7 +58,7 @@ function buildSchedualTable(streetKey) {
   let html = ``;
   tableContainer.innerHTML = ``;
 
-  scheduleArray(streetKey)
+  getScheduleArray(streetKey)
     .then(scheduleArray => {
       for (let schedule of scheduleArray) {
         for (let routeSchedule of schedule[`route-schedules`]) {
@@ -76,10 +76,10 @@ function buildSchedualTable(streetKey) {
     })
 }
 
-function scheduleArray(streetKey) {
+function getScheduleArray(streetKey) {
   const jsonPromise = [];
 
-  return stopsInStreet(streetKey)
+  return gstStopNamesInStreet(streetKey)
     .then(stopArray => {
       const stopKeyArray = stopArray.map(ele => ele.key);
 
@@ -101,7 +101,7 @@ function scheduleArray(streetKey) {
     })
 }
 
-function stopsInStreet(streetKey) {
+function gstStopNamesInStreet(streetKey) {
   return fetch(`https://api.winnipegtransit.com/v3/stops.json?street=${streetKey}&api-key=${apiKey}`)
     .then(response => {
       if (response.ok) {
